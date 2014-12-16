@@ -1,0 +1,6 @@
+.steppe-wrapper {
+  display:block;
+  min-height:50px;
+  min-width:50px;
+  background:red;
+}

@@ -18,7 +18,7 @@ or `lodash`).
 ## Usage
 
 ```js
-var input = $('search');
+var input = $('#search');
 var options = {
   find: function(input, callback) {
     var suggestions = [];
@@ -38,7 +38,7 @@ Steppe listens to `focus` and `blur` events on the input to enable or disable
 itself.
 
 Once enabled, it listens to the `keypress` events, and calls your custom
-`finder` method. This method itself is asynchronous and will call its callback
+`find` method. This method itself is asynchronous and will call its callback
 when done with a list of suggestions, which will in turn be displayed. Each
 suggestion will go through the `render` method to turn it into an HTML element.
 
