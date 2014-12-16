@@ -12,12 +12,12 @@ bower install steppe.js
 
 ## Dependencies
 
-Steppe depeneds on `$` (either `jQuery` or `zepto`) and `_` (either `underscore`
+Steppe depends on `$` (either `jQuery` or `zepto`) and `_` (either `underscore`
 or `lodash`).
 
 ## Usage
 
-```
+```js
 var input = $('search');
 var options = {
   find: function(input, callback) {
