@@ -1,0 +1,35 @@
+{
+  "name": "steppe.js",
+  "version": "0.0.0",
+  "description": "Lightweight autocomplete plugin.",
+  "main": ".",
+  "dependencies": {
+    "karma": "~0.12.28"
+  },
+  "devDependencies": {
+    "karma": "~0.12.28",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "mocha": "~2.0.1",
+    "karma-mocha": "~0.1.10",
+    "chai": "~1.10.0",
+    "karma-chai": "~0.1.0",
+    "sinon": "~1.12.2",
+    "karma-sinon": "~1.0.4"
+  },
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pixelastic/steppe.js"
+  },
+  "keywords": [
+    "autocomplete",
+    "search"
+  ],
+  "author": "pixelastic",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/pixelastic/steppe.js/issues"
+  }
+}
