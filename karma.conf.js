@@ -3,19 +3,26 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
-    frameworks: ['mocha', 'chai', 'sinon'],
+    frameworks: [
+      'mocha',
+      'chai',
+      'sinon',
+      'fixture'
+    ],
     files: [
       'bower_components/zepto/zepto.min.js',
-      'bower_components/lodash/dist/lodash.min.js', {
-        pattern: 'test/fixtures/index.html',
-        watched: true,
-        included: true,
-        served: true
-      },
+      'bower_components/lodash/dist/lodash.min.js',
       'app/js/steppe.js',
+      'test/helpers.js',
+      'test/fixtures/**/*.html',
       'test/*_test.js'
     ],
-    preprocessors: {},
+    /**
+     * 1. HTML files must be converted to js strings
+     **/
+    preprocessors: {
+      'test/fixtures/**/*.html': 'html2js' /* 1 */
+    },
 
     // list of files to exclude
     exclude: [],

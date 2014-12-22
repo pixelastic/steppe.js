@@ -13,6 +13,7 @@
   "globals": {
     "_": true,
     "$": false,
+    "fixture": false,
     "expect": false,
     "afterEach": false,
     "beforeEach": false,
