@@ -1,5 +1,7 @@
 window.Steppe = (function() {
   var input;
+  var value;
+  var suggestions = [];
   var options = {};
   var suggestionWrapper = $('<div class="steppe-wrapper"></div>');
   var defaultOptions = {
@@ -11,49 +13,40 @@ window.Steppe = (function() {
     }
   };
 
-  function displaySuggestions(suggestions) {
-    var content = _.map(suggestions, options.render).join('');
+  function renderWrapper() {
+    suggestions.length ? suggestionWrapper.show() : suggestionWrapper.hide();
+  }
+
+  function displaySuggestions(userSuggestions) {
+    suggestions = userSuggestions;
+
+    var content = _.map(userSuggestions, options.render).join('');
     suggestionWrapper.html(content);
+    renderWrapper();
   }
 
-  function addSuggestionWrapper() {
-    input.after(suggestionWrapper);
-  }
+  function onKeyDown(event) {
+    value = $(event.target).val();
 
-  function onFocus(event) {
-    console.log('onFocus');
-    var target = $(event.target);
-    target.on('keyup', onKeyUp);
-  }
-
-  function onBlur(event) {
-    var target = $(event.target);
-    target.off('keyup', onKeyUp);
-  }
-
-  function onKeyUp(event) {
-    var target = $(event.target);
-    var value = target.val();
     options.find(value, displaySuggestions);
+  }
+
+  function onBlur() {
+    suggestionWrapper.hide();
   }
 
   function init(initInput, initOptions) {
     input = $(initInput);
     options = _.defaults({}, initOptions, defaultOptions);
 
-    input.on('focus', onFocus);
+    input.on('keydown', onKeyDown);
     input.on('blur', onBlur);
-    console.log($('#search'));
+    input.on('focus', renderWrapper);
 
-    addSuggestionWrapper();
+    input.after(suggestionWrapper.hide());
   }
 
   return {
-    init: init,
-    _onFocus: onFocus,
-    _onBlur: onBlur,
-    _onKeyUp: onKeyUp,
-    _addSuggestionWrapper: addSuggestionWrapper,
-    _displaySuggestions: displaySuggestions
+    init: init
   };
 })();

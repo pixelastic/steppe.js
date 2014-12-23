@@ -3,11 +3,21 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
+    /**
+     * Frameworks are loaded in reverse order.
+     *
+     * 1. Used to test DOM element. ie. expect($('#foo')).to.have.attr('foo')
+     * 2. Stubs, Spys and Mocks.
+     * 3. Load HTML into tests.
+     **/
     frameworks: [
-      'mocha',
+      'chai-jquery', /* 1 */
+      'jquery-1.8.3', /* 1 */
       'chai',
-      'sinon',
-      'fixture'
+      'mocha',
+      'chai-sinon', /* 2 */
+      'sinon', /* 2 */
+      'fixture' /* 3 */
     ],
     files: [
       'bower_components/zepto/zepto.min.js',
