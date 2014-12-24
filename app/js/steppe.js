@@ -1,9 +1,14 @@
 window.Steppe = (function() {
-  var input;
-  var value;
-  var suggestions = [];
-  var options = {};
-  var suggestionWrapper = $('<div class="steppe-wrapper"></div>');
+  var $ = Zepto || jQuery;
+  var _private = {
+    input: null,
+    value: null,
+    suggestions: [],
+    selected: null,
+    selectedIndex: -1,
+    options: {},
+    suggestionWrapper: $('<div class="steppe-wrapper"></div>')
+  };
   var defaultOptions = {
     find: function(input, callback) {
       callback([input]);
@@ -12,41 +17,79 @@ window.Steppe = (function() {
       return '<div class="steppe-suggestion">' + suggestion + '</div>';
     }
   };
+  var KEYCODES = {
+    PAGE_UP: 33,
+    PAGE_DOWN: 34,
+    UP: 38,
+    DOWN: 40
+  };
 
   function renderWrapper() {
-    suggestions.length ? suggestionWrapper.show() : suggestionWrapper.hide();
+    if (_private.suggestions.length > 0) {
+      _private.suggestionWrapper.show();
+    } else {
+      _private.suggestionWrapper.hide();
+    }
   }
 
   function displaySuggestions(userSuggestions) {
-    suggestions = userSuggestions;
+    _private.suggestions = userSuggestions;
 
-    var content = _.map(userSuggestions, options.render).join('');
-    suggestionWrapper.html(content);
+    var content = _.map(userSuggestions, _private.options.render).join('');
+    _private.suggestionWrapper.html(content);
     renderWrapper();
   }
 
-  function onKeyDown(event) {
-    value = $(event.target).val();
+  function keyboardSelect(keycode) {
+    // Break if not a keyboard arrow
+    if (!_.contains(_.values(KEYCODES), keycode)) {
+      return;
+    }
+    
+    // Handling movement keys
+    switch (keycode) {
+      case KEYCODES.DOWN:
+        _private.selectedIndex++;
+        break;
+      case KEYCODES.UP:
+        _private.selectedIndex--;
+        break;
+      case KEYCODES.PAGE_UP:
+        _private.selectedIndex = 0;
+        break;
+      case KEYCODES.PAGE_DOWN:
+        _private.selectedIndex = _private.suggestions.length;
+        break;
+    }
 
-    options.find(value, displaySuggestions);
+    _private.selectedIndex = Math.max(Math.min(_private.selectedIndex, _private.suggestions.length), 0);
   }
 
-  function onBlur() {
-    suggestionWrapper.hide();
+  function onKeyDown(event) {
+    keyboardSelect(event.keycode);
+
+    _private.value = $(event.target).val();
+
+    _private.options.find(_private.value, displaySuggestions);
+  }
+
+  function onFocusOut() {
+    _private.suggestionWrapper.hide();
   }
 
   function init(initInput, initOptions) {
-    input = $(initInput);
-    options = _.defaults({}, initOptions, defaultOptions);
+    _private.input = $(initInput);
+    _private.options = _.defaults({}, initOptions, defaultOptions);
 
-    input.on('keydown', onKeyDown);
-    input.on('blur', onBlur);
-    input.on('focus', renderWrapper);
+    _private.input.on('keydown', onKeyDown);
+    _private.input.on('focusout', onFocusOut);
+    _private.input.on('focus', renderWrapper);
 
-    input.after(suggestionWrapper.hide());
+    _private.input.after(_private.suggestionWrapper.hide());
   }
 
   return {
-    init: init
+    init: init,
+    _private: _private
   };
 })();

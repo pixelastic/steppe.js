@@ -2,14 +2,38 @@
 
 describe('Steppe', function() {
   var input;
+  var $input;
+  var $j = jQuery;
+  var $z = Zepto;
+  var KEYCODES = {
+    PAGE_UP: 33,
+    PAGE_DOWN: 34,
+    UP: 38,
+    DOWN: 40
+  };
 
-  function expectToHaveCSSClass(element, cssClass) {
-    expect(element.attr('class')).to.contain(cssClass);
+  function initAndPopulate(suggestions) {
+    var options = {
+      find: function(input, callback) {
+        callback(suggestions);
+      }
+    };
+    Steppe.init(input, options);
+    input.trigger('keydown');
+  }
+
+  function getKeyDownEvent(keycode) {
+    var event = Zepto.Event('keydown');
+    event.keycode = keycode;
+    return event;
   }
 
   beforeEach(function() {
     fixture.load('index.html');
-    input = $('#search');
+    // We here have both jQuery and Zepto.
+    // Zepto is used by Steppe while jQuery is used for testing.
+    input = $z(document.getElementById('search'));
+    $input = $j(document.getElementById('search'));
     input.val('foo');
   });
 
@@ -75,16 +99,6 @@ describe('Steppe', function() {
   });
 
   describe('suggestionWrapper', function() {
-    function initAndPopulate(suggestions) {
-      var options = {
-        find: function(input, callback) {
-          callback(suggestions);
-        }
-      };
-      Steppe.init(input, options);
-      input.trigger('keydown');
-    }
-
     it('should be hidden on init', function() {
       // Given
 
@@ -92,7 +106,7 @@ describe('Steppe', function() {
       Steppe.init(input);
 
       // Then
-      var actual = input.next();
+      var actual = $input.next();
       expect(actual).to.have.class('steppe-wrapper');
       expect(actual).to.not.be.visible;
     });
@@ -104,7 +118,7 @@ describe('Steppe', function() {
       initAndPopulate(['Anna', 'Barbara', 'Cassandra']);
 
       // Then
-      var actual = input.next();
+      var actual = $input.next();
       expect(actual).to.be.visible;
 
     });
@@ -116,7 +130,7 @@ describe('Steppe', function() {
       initAndPopulate([]);
 
       // Then
-      var actual = input.next();
+      var actual = $input.next();
       expect(actual).to.not.be.visible;
     });
 
@@ -125,23 +139,23 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.blur();
+      input.trigger('focusout');
 
       // Then
-      var actual = input.next();
-      expect(actual).to.not.be.visible;
+      // var actual = $jinput.next();
+      // expect(actual).to.not.be.visible;
     });
 
     it('should be visible when focusing', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.blur();
+      input.trigger('focusout');
 
       // When
       input.focus();
 
       // Then
-      var actual = input.next();
+      var actual = $input.next();
       expect(actual).to.be.visible;
     });
 
@@ -154,7 +168,7 @@ describe('Steppe', function() {
       input.focus();
 
       // Then
-      var actual = input.next();
+      var actual = $input.next();
       expect(actual).to.not.be.visible;
     });
 
@@ -165,7 +179,7 @@ describe('Steppe', function() {
           callback(['foobar']);
         },
         render: function(suggestion) {
-          return '<div class="foobar">'+suggestion+'</div>';
+          return '<div class="foobar">' + suggestion + '</div>';
         }
       };
       Steppe.init(input, options);
@@ -174,12 +188,36 @@ describe('Steppe', function() {
       input.trigger('keydown');
 
       // Then
-      var actual = input.next();
+      var actual = $input.next();
       expect(actual).to.have.html('<div class="foobar">foobar</div>');
     });
   });
 
-  // Par défaut, pas de selection
+  describe('selection', function() {
+    it('should not have any selection on init', function() {
+      // Given
+
+      // When
+      Steppe.init(input);
+
+      // Then
+      expect(Steppe._private.selected).to.equal(null);
+      expect(Steppe._private.selectedIndex).to.equal(-1);
+    });
+
+    it('should have a selection if suggestions and pressing down', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+
+      // When
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+
+      // Then
+      // expect(Steppe._private.selected).to.equal('a');
+      expect(Steppe._private.selectedIndex).to.equal(0);
+    });
+  });
+
   // Si keydown, selection est le premier
   // Si keyup, selection remonte
   // Si keydown en bas, selection du premier

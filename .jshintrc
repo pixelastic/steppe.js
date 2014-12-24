@@ -25,7 +25,9 @@
     "it": false,
     "xit": false,
     "iit": false,
-    "Steppe": false
+    "Steppe": false,
+    "jQuery": false,
+    "Zepto": false
   },
   "bitwise": true,
   "eqeqeq": true,
