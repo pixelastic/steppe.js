@@ -1,14 +1,6 @@
 window.Steppe = (function() {
   var $ = Zepto || jQuery;
-  var _private = {
-    input: null,
-    value: null,
-    suggestions: [],
-    selected: null,
-    selectedIndex: -1,
-    options: {},
-    suggestionWrapper: $('<div class="steppe-wrapper"></div>')
-  };
+  var _private;
   var defaultOptions = {
     find: function(input, callback) {
       callback([input]);
@@ -18,8 +10,6 @@ window.Steppe = (function() {
     }
   };
   var KEYCODES = {
-    PAGE_UP: 33,
-    PAGE_DOWN: 34,
     UP: 38,
     DOWN: 40
   };
@@ -41,28 +31,38 @@ window.Steppe = (function() {
   }
 
   function keyboardSelect(keycode) {
-    // Break if not a keyboard arrow
+    // Break if not a special key
     if (!_.contains(_.values(KEYCODES), keycode)) {
       return;
     }
-    
+
     // Handling movement keys
     switch (keycode) {
       case KEYCODES.DOWN:
-        _private.selectedIndex++;
+        if (_private.selectedIndex === null) {
+          _private.selectedIndex = 0;
+        } else {
+          _private.selectedIndex++;
+        }
         break;
       case KEYCODES.UP:
-        _private.selectedIndex--;
-        break;
-      case KEYCODES.PAGE_UP:
-        _private.selectedIndex = 0;
-        break;
-      case KEYCODES.PAGE_DOWN:
-        _private.selectedIndex = _private.suggestions.length;
+        if (_private.selectedIndex === null) {
+          _private.selectedIndex = _private.suggestions.length - 1;
+        } else {
+          _private.selectedIndex--;
+        }
         break;
     }
 
-    _private.selectedIndex = Math.max(Math.min(_private.selectedIndex, _private.suggestions.length), 0);
+    // Handle going over bounds
+    if (_private.selectedIndex < 0) {
+      _private.selectedIndex = _private.suggestions.length - 1;
+    }
+    if (_private.selectedIndex > _private.suggestions.length - 1) {
+      _private.selectedIndex = 0;
+    }
+
+    _private.selected = _private.suggestions[_private.selectedIndex];
   }
 
   function onKeyDown(event) {
@@ -78,8 +78,16 @@ window.Steppe = (function() {
   }
 
   function init(initInput, initOptions) {
-    _private.input = $(initInput);
-    _private.options = _.defaults({}, initOptions, defaultOptions);
+    _private = {
+      input: $(initInput),
+      value: null,
+      suggestions: [],
+      selected: null,
+      selectedIndex: null,
+      options: _.defaults({}, initOptions, defaultOptions),
+      suggestionWrapper: $('<div class="steppe-wrapper"></div>')
+    };
+    this._private = _private;
 
     _private.input.on('keydown', onKeyDown);
     _private.input.on('focusout', onFocusOut);
@@ -89,7 +97,6 @@ window.Steppe = (function() {
   }
 
   return {
-    init: init,
-    _private: _private
+    init: init
   };
 })();

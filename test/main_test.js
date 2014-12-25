@@ -202,10 +202,10 @@ describe('Steppe', function() {
 
       // Then
       expect(Steppe._private.selected).to.equal(null);
-      expect(Steppe._private.selectedIndex).to.equal(-1);
+      expect(Steppe._private.selectedIndex).to.equal(null);
     });
 
-    it('should have a selection if suggestions and pressing down', function() {
+    it('should select first if suggestions and pressing down', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
 
@@ -213,15 +213,76 @@ describe('Steppe', function() {
       input.trigger(getKeyDownEvent(KEYCODES.DOWN));
 
       // Then
-      // expect(Steppe._private.selected).to.equal('a');
+      expect(Steppe._private.selected).to.equal('a');
       expect(Steppe._private.selectedIndex).to.equal(0);
+    });
+
+    it('should select last if suggestions and pressing up', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+
+      // When
+      input.trigger(getKeyDownEvent(KEYCODES.UP));
+
+      // Then
+      expect(Steppe._private.selected).to.equal('c');
+      expect(Steppe._private.selectedIndex).to.equal(2);
+    });
+
+    it('should select next suggestion when pressing down', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+
+      // When
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+
+      // Then
+      expect(Steppe._private.selected).to.equal('b');
+      expect(Steppe._private.selectedIndex).to.equal(1);
+    });
+
+    it('should select previous suggestion when pressing up', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+
+      // When
+      input.trigger(getKeyDownEvent(KEYCODES.UP));
+
+      // Then
+      expect(Steppe._private.selected).to.equal('a');
+      expect(Steppe._private.selectedIndex).to.equal(0);
+    });
+
+    it('should select first when pressing down on last one', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+      input.trigger(getKeyDownEvent(KEYCODES.UP));
+
+      // When
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+
+      // Then
+      expect(Steppe._private.selected).to.equal('a');
+      expect(Steppe._private.selectedIndex).to.equal(0);
+    });
+
+    it('should select last when pressing up on first one', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+
+      // When
+      input.trigger(getKeyDownEvent(KEYCODES.UP));
+
+      // Then
+      expect(Steppe._private.selected).to.equal('c');
+      expect(Steppe._private.selectedIndex).to.equal(2);
     });
   });
 
-  // Si keydown, selection est le premier
-  // Si keyup, selection remonte
-  // Si keydown en bas, selection du premier
-  // Si keyup en haut, selection du dernier
   // Quand change selection, change affichage dans input
   // Classe spéciale CSS sur élément selectionné
   // Si enter, default submit
