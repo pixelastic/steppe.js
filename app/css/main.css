@@ -4,3 +4,11 @@
   min-width:50px;
   background:red;
 }
+
+.steppe-suggestion {
+  background:blue;
+}
+.steppe-suggestion-selected {
+  font-weight:bold;
+  background:yellow;
+}

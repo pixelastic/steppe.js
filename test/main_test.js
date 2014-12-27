@@ -6,8 +6,6 @@ describe('Steppe', function() {
   var $j = jQuery;
   var $z = Zepto;
   var KEYCODES = {
-    PAGE_UP: 33,
-    PAGE_DOWN: 34,
     UP: 38,
     DOWN: 40
   };
@@ -19,12 +17,12 @@ describe('Steppe', function() {
       }
     };
     Steppe.init(input, options);
-    input.trigger('keydown');
+    input.trigger('keypress');
   }
 
-  function getKeyDownEvent(keycode) {
-    var event = Zepto.Event('keydown');
-    event.keycode = keycode;
+  function getkeypressEvent(keyCode) {
+    var event = Zepto.Event('keypress');
+    event.keyCode = keyCode;
     return event;
   }
 
@@ -50,7 +48,7 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      input.trigger('keydown');
+      input.trigger('keypress');
 
       // Then
       expect(options.find).to.have.been.called;
@@ -70,7 +68,7 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      input.trigger('keydown');
+      input.trigger('keypress');
 
       // Then
       expect(options.render).to.have.been.called;
@@ -91,7 +89,7 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      input.trigger('keydown');
+      input.trigger('keypress');
 
       // Then
       expect(options.render).to.not.have.been.called;
@@ -185,7 +183,7 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      input.trigger('keydown');
+      input.trigger('keypress');
 
       // Then
       var actual = $input.next();
@@ -210,7 +208,7 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
 
       // Then
       expect(Steppe._private.selected).to.equal('a');
@@ -222,7 +220,7 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.trigger(getKeyDownEvent(KEYCODES.UP));
+      input.trigger(getkeypressEvent(KEYCODES.UP));
 
       // Then
       expect(Steppe._private.selected).to.equal('c');
@@ -232,10 +230,10 @@ describe('Steppe', function() {
     it('should select next suggestion when pressing down', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
 
       // When
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
 
       // Then
       expect(Steppe._private.selected).to.equal('b');
@@ -245,11 +243,11 @@ describe('Steppe', function() {
     it('should select previous suggestion when pressing up', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
 
       // When
-      input.trigger(getKeyDownEvent(KEYCODES.UP));
+      input.trigger(getkeypressEvent(KEYCODES.UP));
 
       // Then
       expect(Steppe._private.selected).to.equal('a');
@@ -259,10 +257,10 @@ describe('Steppe', function() {
     it('should select first when pressing down on last one', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getKeyDownEvent(KEYCODES.UP));
+      input.trigger(getkeypressEvent(KEYCODES.UP));
 
       // When
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
 
       // Then
       expect(Steppe._private.selected).to.equal('a');
@@ -272,19 +270,40 @@ describe('Steppe', function() {
     it('should select last when pressing up on first one', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getKeyDownEvent(KEYCODES.DOWN));
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
 
       // When
-      input.trigger(getKeyDownEvent(KEYCODES.UP));
+      input.trigger(getkeypressEvent(KEYCODES.UP));
 
       // Then
       expect(Steppe._private.selected).to.equal('c');
       expect(Steppe._private.selectedIndex).to.equal(2);
     });
+
+    it('should change the value of the input when selecting a suggestion', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+
+      // When
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+
+      // Then
+      expect(input.val()).to.equal('a');
+    });
+
+    it('should add a steppe-suggestion-selected class on the currently selected suggestion', function() {
+      // Given
+      initAndPopulate(['a', 'b', 'c']);
+
+      // When
+      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+
+      // Then
+      var firstElement = $j($input.next().children()[0]);
+      expect(firstElement).to.have.class('steppe-suggestion-selected');
+    });
   });
 
-  // Quand change selection, change affichage dans input
-  // Classe spéciale CSS sur élément selectionné
   // Si enter, default submit
 
 });

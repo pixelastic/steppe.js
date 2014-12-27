@@ -3,10 +3,13 @@ window.Steppe = (function() {
   var _private;
   var defaultOptions = {
     find: function(input, callback) {
-      callback([input]);
+      callback([input, 'b', 'c', 'd']);
     },
     render: function(suggestion) {
       return '<div class="steppe-suggestion">' + suggestion + '</div>';
+    },
+    val: function(suggestion) {
+      return suggestion.toString();
     }
   };
   var KEYCODES = {
@@ -31,42 +34,55 @@ window.Steppe = (function() {
   }
 
   function keyboardSelect(keycode) {
-    // Break if not a special key
-    if (!_.contains(_.values(KEYCODES), keycode)) {
-      return;
-    }
+
+    var currentSelectedIndex = _private.selectedIndex;
 
     // Handling movement keys
     switch (keycode) {
       case KEYCODES.DOWN:
-        if (_private.selectedIndex === null) {
-          _private.selectedIndex = 0;
+        if (currentSelectedIndex === null) {
+          currentSelectedIndex = 0;
         } else {
-          _private.selectedIndex++;
+          currentSelectedIndex++;
         }
         break;
       case KEYCODES.UP:
-        if (_private.selectedIndex === null) {
-          _private.selectedIndex = _private.suggestions.length - 1;
+        if (currentSelectedIndex === null) {
+          currentSelectedIndex = _private.suggestions.length - 1;
         } else {
-          _private.selectedIndex--;
+          currentSelectedIndex--;
         }
         break;
     }
 
     // Handle going over bounds
-    if (_private.selectedIndex < 0) {
-      _private.selectedIndex = _private.suggestions.length - 1;
+    if (currentSelectedIndex < 0) {
+      currentSelectedIndex = _private.suggestions.length - 1;
     }
-    if (_private.selectedIndex > _private.suggestions.length - 1) {
-      _private.selectedIndex = 0;
+    if (currentSelectedIndex > _private.suggestions.length - 1) {
+      currentSelectedIndex = 0;
     }
 
-    _private.selected = _private.suggestions[_private.selectedIndex];
+    selectSuggestion(currentSelectedIndex);
   }
 
-  function onKeyDown(event) {
-    keyboardSelect(event.keycode);
+  function selectSuggestion(index) {
+    _private.selectedIndex = index;
+    _private.selected = _private.suggestions[index];
+    _private.input.val(_private.options.val(_private.selected));
+
+    var children = _private.suggestionWrapper.children();
+    children.removeClass('steppe-suggestion-selected');
+    $(children[index]).addClass('steppe-suggestion-selected');
+
+  }
+
+  function onKeyPress(event) {
+    // Handle movement keys
+    if (_.contains(_.values(KEYCODES), event.keyCode)) {
+      keyboardSelect(event.keyCode);
+      return;
+    }
 
     _private.value = $(event.target).val();
 
@@ -89,7 +105,7 @@ window.Steppe = (function() {
     };
     this._private = _private;
 
-    _private.input.on('keydown', onKeyDown);
+    _private.input.on('keypress', onKeyPress);
     _private.input.on('focusout', onFocusOut);
     _private.input.on('focus', renderWrapper);
 
