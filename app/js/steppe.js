@@ -34,7 +34,6 @@ window.Steppe = (function() {
   }
 
   function keyboardSelect(keycode) {
-
     var currentSelectedIndex = _private.selectedIndex;
 
     // Handling movement keys
@@ -78,15 +77,17 @@ window.Steppe = (function() {
   }
 
   function onKeyPress(event) {
+    _private.value = $(event.target).val();
+    _private.options.find(_private.value, displaySuggestions);
+  }
+
+  function onKeyDown(event) {
     // Handle movement keys
-    if (_.contains(_.values(KEYCODES), event.keyCode)) {
-      keyboardSelect(event.keyCode);
+    if (!_.contains(_.values(KEYCODES), event.keyCode)) {
       return;
     }
 
-    _private.value = $(event.target).val();
-
-    _private.options.find(_private.value, displaySuggestions);
+    keyboardSelect(event.keyCode);
   }
 
   function onFocusOut() {
@@ -105,7 +106,14 @@ window.Steppe = (function() {
     };
     this._private = _private;
 
+    // Disable native browser dropdown suggestion list
+    _private.input.attr('autocomplete', 'off');
+
+    // Update suggestion and current value
     _private.input.on('keypress', onKeyPress);
+    // Handle arrow keys selection
+    _private.input.on('keydown', onKeyDown);
+    // Hide / show suggestions
     _private.input.on('focusout', onFocusOut);
     _private.input.on('focus', renderWrapper);
 

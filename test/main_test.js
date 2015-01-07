@@ -1,5 +1,8 @@
 'use strict';
 
+// Replace _private with getter methods
+// Or find a way to expose .selected and .selectedIndex updated
+
 describe('Steppe', function() {
   var input;
   var $input;
@@ -20,8 +23,8 @@ describe('Steppe', function() {
     input.trigger('keypress');
   }
 
-  function getkeypressEvent(keyCode) {
-    var event = Zepto.Event('keypress');
+  function getKeyEvent(keyCode) {
+    var event = Zepto.Event('keydown');
     event.keyCode = keyCode;
     return event;
   }
@@ -208,7 +211,7 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // Then
       expect(Steppe._private.selected).to.equal('a');
@@ -220,7 +223,7 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.UP));
+      input.trigger(getKeyEvent(KEYCODES.UP));
 
       // Then
       expect(Steppe._private.selected).to.equal('c');
@@ -230,10 +233,10 @@ describe('Steppe', function() {
     it('should select next suggestion when pressing down', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // Then
       expect(Steppe._private.selected).to.equal('b');
@@ -243,11 +246,11 @@ describe('Steppe', function() {
     it('should select previous suggestion when pressing up', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.UP));
+      input.trigger(getKeyEvent(KEYCODES.UP));
 
       // Then
       expect(Steppe._private.selected).to.equal('a');
@@ -257,10 +260,10 @@ describe('Steppe', function() {
     it('should select first when pressing down on last one', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getkeypressEvent(KEYCODES.UP));
+      input.trigger(getKeyEvent(KEYCODES.UP));
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // Then
       expect(Steppe._private.selected).to.equal('a');
@@ -270,10 +273,10 @@ describe('Steppe', function() {
     it('should select last when pressing up on first one', function() {
       // Given
       initAndPopulate(['a', 'b', 'c']);
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.UP));
+      input.trigger(getKeyEvent(KEYCODES.UP));
 
       // Then
       expect(Steppe._private.selected).to.equal('c');
@@ -285,7 +288,7 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // Then
       expect(input.val()).to.equal('a');
@@ -296,7 +299,7 @@ describe('Steppe', function() {
       initAndPopulate(['a', 'b', 'c']);
 
       // When
-      input.trigger(getkeypressEvent(KEYCODES.DOWN));
+      input.trigger(getKeyEvent(KEYCODES.DOWN));
 
       // Then
       var firstElement = $j($input.next().children()[0]);
