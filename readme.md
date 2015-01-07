@@ -27,6 +27,9 @@ var options = {
   },
   render: function(suggestion) {
     return '<p>' + suggestion + '</p>';
+  },
+  val: function(suggestion) {
+    return suggestion.name;
   }
 };
 Steppe.bind(input, options);
@@ -37,10 +40,12 @@ Steppe.bind(input, options);
 Steppe listens to `focus` and `blur` events on the input to enable or disable
 itself.
 
-Once enabled, it listens to the `keypress` events, and calls your custom
-`find` method. This method itself is asynchronous and will call its callback
-when done with a list of suggestions, which will in turn be displayed. Each
-suggestion will go through the `render` method to turn it into an HTML element.
+Once enabled, it listens to the `keydown` events, and calls your custom `find`
+method with the current value of the input, and a callback. The `find` method
+is thus asynchronous. You just have to call the callback with the list of
+suggestions to display once you got them. All of this suggestions will in turn
+be passed to the `render` method, and the final output will be rendered in
+a dropdown list below the input.
 
 ## Inspiration
 
