@@ -3,7 +3,7 @@ window.Steppe = (function() {
   var _private;
   var defaultOptions = {
     find: function(input, callback) {
-      callback([input, 'b', 'c', 'd']);
+      callback();
     },
     render: function(suggestion) {
       return '<div class="steppe-suggestion">' + suggestion + '</div>';
@@ -76,18 +76,21 @@ window.Steppe = (function() {
 
   }
 
-  function onKeyPress(event) {
-    _private.value = $(event.target).val();
-    _private.options.find(_private.value, displaySuggestions);
+  function isSpecialKeyPressed(event) {
+    return _.contains(_.values(KEYCODES), event.keyCode);
   }
 
+  // Pressing special movement keys
   function onKeyDown(event) {
-    // Handle movement keys
-    if (!_.contains(_.values(KEYCODES), event.keyCode)) {
+    if (isSpecialKeyPressed(event)) {
+      keyboardSelect(event.keyCode);
       return;
     }
 
-    keyboardSelect(event.keyCode);
+    _.defer(function() {
+      _private.value = $(event.target).val();
+      _private.options.find(_private.value, displaySuggestions);
+    });
   }
 
   function onFocusOut() {
@@ -109,11 +112,7 @@ window.Steppe = (function() {
     // Disable native browser dropdown suggestion list
     _private.input.attr('autocomplete', 'off');
 
-    // Update suggestion and current value
-    _private.input.on('keypress', onKeyPress);
-    // Handle arrow keys selection
     _private.input.on('keydown', onKeyDown);
-    // Hide / show suggestions
     _private.input.on('focusout', onFocusOut);
     _private.input.on('focus', renderWrapper);
 
