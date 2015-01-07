@@ -73,7 +73,6 @@ window.Steppe = (function() {
     var children = _private.suggestionWrapper.children();
     children.removeClass('steppe-suggestion-selected');
     $(children[index]).addClass('steppe-suggestion-selected');
-
   }
 
   function isSpecialKeyPressed(event) {

@@ -355,4 +355,7 @@ describe('Steppe', function() {
   });
 
   // Si enter, default submit
+  // Si valeur ne change pas, selection actuelle ne doit pas changer
+  // visuellement
+  // Si valeur change, selection remise à zero
 });
