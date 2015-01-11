@@ -70,9 +70,19 @@ window.Steppe = (function() {
     _private.selected = _private.suggestions[index];
     _private.input.val(_private.options.val(_private.selected));
 
+    // Going UP in selection moves the caret at the start of the input
+    moveCaretAtEnd();
+
     var children = _private.suggestionWrapper.children();
     children.removeClass('steppe-suggestion-selected');
     $(children[index]).addClass('steppe-suggestion-selected');
+  }
+
+  function moveCaretAtEnd() {
+    _.defer(function() {
+      var length = _private.input.val().length;
+      _private.input[0].setSelectionRange(length, length);
+    });
   }
 
   function isSpecialKeyPressed(event) {
@@ -81,7 +91,7 @@ window.Steppe = (function() {
 
   // Pressing special movement keys
   function onKeyDown(event) {
-    if (isSpecialKeyPressed(event)) {
+    if (isSpecialKeyPressed(event) && !!_private.value) {
       keyboardSelect(event.keyCode);
       return;
     }
