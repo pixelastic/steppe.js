@@ -91,15 +91,20 @@ window.Steppe = (function() {
 
   // Pressing special movement keys
   function onKeyDown(event) {
-    if (isSpecialKeyPressed(event) && !!_private.value) {
-      keyboardSelect(event.keyCode);
+    if (!_private.value) {
+      return;
+    }
+    if (!isSpecialKeyPressed(event)) {
       return;
     }
 
-    _.defer(function() {
-      _private.value = $(event.target).val();
-      _private.options.find(_private.value, displaySuggestions);
-    });
+    keyboardSelect(event.keyCode);
+  }
+
+  // Updating input value
+  function onInput() {
+    _private.value = _private.input.val();
+    _private.options.find(_private.value, displaySuggestions);
   }
 
   function onFocusOut() {
@@ -121,6 +126,7 @@ window.Steppe = (function() {
     // Disable native browser dropdown suggestion list
     _private.input.attr('autocomplete', 'off');
 
+    _private.input.on('input', onInput);
     _private.input.on('keydown', onKeyDown);
     _private.input.on('focusout', onFocusOut);
     _private.input.on('focus', renderWrapper);

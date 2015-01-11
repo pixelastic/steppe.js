@@ -37,13 +37,17 @@ describe('Steppe', function() {
     _.defer(callback);
   }
 
+  function updateValue(value) {
+    input.val(value);
+    input.trigger('input');
+  }
+
   beforeEach(function() {
     fixture.load('index.html');
     // We here have both jQuery and Zepto.
     // Zepto is used by Steppe while jQuery is used for testing.
     input = $z(document.getElementById('search'));
     $input = $j(document.getElementById('search'));
-    input.val('foo');
   });
 
   afterEach(function() {
@@ -51,7 +55,7 @@ describe('Steppe', function() {
   });
 
   describe('find', function() {
-    it('should call custom find method on each keydown', function(done) {
+    it('should call custom find method when value changes', function() {
       // Given
       var options = {
         find: sinon.stub()
@@ -59,17 +63,16 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      sendKey(KEYCODES.A, function() {
-        // Then
-        expect(options.find).to.have.been.called;
-        expect(options.find).to.have.been.calledWith('foo');
-        done();
-      });
+      updateValue('foo');
+
+      // Then
+      expect(options.find).to.have.been.called;
+      expect(options.find).to.have.been.calledWith('foo');
     });
   });
 
   describe('render', function() {
-    it('should call custom render with each results of find', function(done) {
+    it('should call custom render with each results of find', function() {
       // Given
       var options = {
         find: function(input, callback) {
@@ -80,18 +83,17 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      sendKey(KEYCODES.A, function() {
-        // Then
-        expect(options.render).to.have.been.called;
-        expect(options.render).to.have.been.calledThrice;
-        expect(options.render).to.have.been.calledWith('Anna');
-        expect(options.render).to.have.been.calledWith('Barbara');
-        expect(options.render).to.have.been.calledWith('Cassandra');
-        done();
-      });
+      updateValue('foo');
+
+      // Then
+      expect(options.render).to.have.been.called;
+      expect(options.render).to.have.been.calledThrice;
+      expect(options.render).to.have.been.calledWith('Anna');
+      expect(options.render).to.have.been.calledWith('Barbara');
+      expect(options.render).to.have.been.calledWith('Cassandra');
     });
 
-    it('should not render empty results', function(done) {
+    it('should not render empty results', function() {
       // Given
       var options = {
         find: function(input, callback) {
@@ -102,11 +104,10 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      sendKey(KEYCODES.A, function() {
-        // Then
-        expect(options.render).to.not.have.been.called;
-        done();
-      });
+      updateValue('foo');
+
+      // Then
+      expect(options.render).to.not.have.been.called;
     });
   });
 
@@ -123,30 +124,28 @@ describe('Steppe', function() {
       expect(actual).to.not.be.visible;
     });
 
-    it('should be visible when we have results', function(done) {
+    it('should be visible when we have results', function() {
       // Given
       initWithSuggestions(['Anna', 'Barbara', 'Cassandra']);
 
       // When
-      sendKey(KEYCODES.A, function() {
-        // Then
-        var actual = $input.next();
-        expect(actual).to.be.visible;
-        done();
-      });
+      updateValue('foo');
+
+      // Then
+      var actual = $input.next();
+      expect(actual).to.be.visible;
     });
 
-    it('should be hidden when we have no results', function(done) {
+    it('should be hidden when we have no results', function() {
       // Given
       initWithSuggestions([]);
 
       // When
-      sendKey(KEYCODES.A, function() {
-        // Then
-        var actual = $input.next();
-        expect(actual).to.not.be.visible;
-        done();
-      });
+      updateValue('foo');
+
+      // Then
+      var actual = $input.next();
+      expect(actual).to.not.be.visible;
     });
 
     it('should be hidden we bluring out of the field', function() {
@@ -164,16 +163,15 @@ describe('Steppe', function() {
     it('should be visible when focusing', function() {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+      input.trigger('focusout');
 
       // When
-      sendKey(KEYCODES.A, function() {
-        input.trigger('focusout');
-        input.focus();
+      input.focus();
 
-        // Then
-        var actual = $input.next();
-        expect(actual).to.be.visible;
-      });
+      // Then
+      var actual = $input.next();
+      expect(actual).to.be.visible;
     });
 
     it('should be hidden when focusing and no results', function() {
@@ -189,7 +187,7 @@ describe('Steppe', function() {
       expect(actual).to.not.be.visible;
     });
 
-    it('should contain custom render output', function(done) {
+    it('should contain custom render output', function() {
       // Given
       var options = {
         find: function(input, callback) {
@@ -202,12 +200,11 @@ describe('Steppe', function() {
       Steppe.init(input, options);
 
       // When
-      sendKey(KEYCODES.A, function() {
-        // Then
-        var actual = $input.next();
-        expect(actual).to.have.html('<div class="foobar">foobar</div>');
-        done();
-      });
+      updateValue('foo');
+
+      // Then
+      var actual = $input.next();
+      expect(actual).to.have.html('<div class="foobar">foobar</div>');
     });
   });
 
@@ -226,15 +223,14 @@ describe('Steppe', function() {
     it('should select first if suggestions and pressing down', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
-        sendKey(KEYCODES.DOWN, function() {
-          // Then
-          expect(Steppe._private.selected).to.equal('a');
-          expect(Steppe._private.selectedIndex).to.equal(0);
-          done();
-        });
+      sendKey(KEYCODES.DOWN, function() {
+        // Then
+        expect(Steppe._private.selected).to.equal('a');
+        expect(Steppe._private.selectedIndex).to.equal(0);
+        done();
       });
 
     });
@@ -242,31 +238,29 @@ describe('Steppe', function() {
     it('should select last if suggestions and pressing up', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
-        sendKey(KEYCODES.UP, function() {
-          // Then
-          expect(Steppe._private.selected).to.equal('c');
-          expect(Steppe._private.selectedIndex).to.equal(2);
-          done();
-        });
+      sendKey(KEYCODES.UP, function() {
+        // Then
+        expect(Steppe._private.selected).to.equal('c');
+        expect(Steppe._private.selectedIndex).to.equal(2);
+        done();
       });
     });
 
     it('should select next suggestion when pressing down', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
+      sendKey(KEYCODES.DOWN, function() {
         sendKey(KEYCODES.DOWN, function() {
-          sendKey(KEYCODES.DOWN, function() {
-            // Then
-            expect(Steppe._private.selected).to.equal('b');
-            expect(Steppe._private.selectedIndex).to.equal(1);
-            done();
-          });
+          // Then
+          expect(Steppe._private.selected).to.equal('b');
+          expect(Steppe._private.selectedIndex).to.equal(1);
+          done();
         });
       });
     });
@@ -274,30 +268,12 @@ describe('Steppe', function() {
     it('should select previous suggestion when pressing up', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
+      sendKey(KEYCODES.DOWN, function() {
         sendKey(KEYCODES.DOWN, function() {
-          sendKey(KEYCODES.DOWN, function() {
-            sendKey(KEYCODES.UP, function() {
-              // Then
-              expect(Steppe._private.selected).to.equal('a');
-              expect(Steppe._private.selectedIndex).to.equal(0);
-              done();
-            });
-          });
-        });
-      });
-    });
-
-    it('should select first when pressing down on last one', function(done) {
-      // Given
-      initWithSuggestions(['a', 'b', 'c']);
-
-      // When
-      sendKey(KEYCODES.A, function() {
-        sendKey(KEYCODES.UP, function() {
-          sendKey(KEYCODES.DOWN, function() {
+          sendKey(KEYCODES.UP, function() {
             // Then
             expect(Steppe._private.selected).to.equal('a');
             expect(Steppe._private.selectedIndex).to.equal(0);
@@ -307,17 +283,50 @@ describe('Steppe', function() {
       });
     });
 
+    it('should select first when pressing down on last one', function(done) {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      sendKey(KEYCODES.UP, function() {
+        sendKey(KEYCODES.DOWN, function() {
+          // Then
+          expect(Steppe._private.selected).to.equal('a');
+          expect(Steppe._private.selectedIndex).to.equal(0);
+          done();
+        });
+      });
+    });
+
     it('should select last when pressing up on first one', function(done) {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      sendKey(KEYCODES.DOWN, function() {
+        sendKey(KEYCODES.UP, function() {
+          // Then
+          expect(Steppe._private.selected).to.equal('c');
+          expect(Steppe._private.selectedIndex).to.equal(2);
+          done();
+        });
+      });
+    });
+
+    xit('should clear the selection when updating the input value', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
 
       // When
       sendKey(KEYCODES.A, function() {
         sendKey(KEYCODES.DOWN, function() {
-          sendKey(KEYCODES.UP, function() {
+          sendKey(KEYCODES.A, function() {
             // Then
-            expect(Steppe._private.selected).to.equal('c');
-            expect(Steppe._private.selectedIndex).to.equal(2);
+            console.log(Steppe._private);
+            // expect(Steppe._private.selected).to.equal('c');
+            // expect(Steppe._private.selectedIndex).to.equal(2);
             done();
           });
         });
@@ -327,29 +336,27 @@ describe('Steppe', function() {
     it('should change the value of the input when selecting a suggestion', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
-        sendKey(KEYCODES.DOWN, function() {
-          // Then
-          expect(input.val()).to.equal('a');
-          done();
-        });
+      sendKey(KEYCODES.DOWN, function() {
+        // Then
+        expect(input.val()).to.equal('a');
+        done();
       });
     });
 
     it('should add a steppe-suggestion-selected class on the currently selected suggestion', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
-        sendKey(KEYCODES.DOWN, function() {
-          // Then
-          var firstElement = $j($input.next().children()[0]);
-          expect(firstElement).to.have.class('steppe-suggestion-selected');
-          done();
-        });
+      sendKey(KEYCODES.DOWN, function() {
+        // Then
+        var firstElement = $j($input.next().children()[0]);
+        expect(firstElement).to.have.class('steppe-suggestion-selected');
+        done();
       });
     });
   });
@@ -357,5 +364,6 @@ describe('Steppe', function() {
   // Si valeur ne change pas, selection actuelle ne doit pas changer
   // visuellement
   // Si valeur change, selection remise à zero
-  // Si UP ou DOWN, le caret doit être à la fin
+  // Ajouter test qu'après avoir selection UP ou DOWN, le selectionStart est
+  // bien égale à la fin du mot, après un _.defer
 });
