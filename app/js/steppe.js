@@ -68,9 +68,9 @@ window.Steppe = (function() {
   function selectSuggestion(index) {
     _private.selectedIndex = index;
     _private.selected = _private.suggestions[index];
-    _private.input.val(_private.options.val(_private.selected));
+    _private.value = _private.options.val(_private.selected);
+    _private.input.val(_private.value);
 
-    // Going UP in selection moves the caret at the start of the input
     moveCaretAtEnd();
 
     var children = _private.suggestionWrapper.children();
@@ -107,7 +107,14 @@ window.Steppe = (function() {
 
   // Updating input value
   function onInput() {
+    var newValue = _private.input.val();
+    if (_private.value === newValue) {
+      return;
+    }
+
     _private.value = _private.input.val();
+    _private.selected = null;
+    _private.selectedIndex = null;
     _private.options.find(_private.value, displaySuggestions);
   }
 

@@ -5,10 +5,10 @@
  * event. It does make the tests a little trickier as they became asynchronous.
  * That's why some expectations need to be wrapped in `_.defer()` calls and
  * fire `done()` when done.
+ *
+ * Note: Caret handling is not covered by tests. Caret should always be set at
+ * the end of input when selecting a suggestion.
  **/
-
-// Replace _private with getter methods
-// Or find a way to expose .selected and .selectedIndex updated
 
 describe('Steppe', function() {
   var input;
@@ -315,21 +315,38 @@ describe('Steppe', function() {
       });
     });
 
-    xit('should clear the selection when updating the input value', function(done) {
+    it('should clear the selection when updating the input value', function(done) {
       // Given
       initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
 
       // When
-      sendKey(KEYCODES.A, function() {
-        sendKey(KEYCODES.DOWN, function() {
-          sendKey(KEYCODES.A, function() {
-            // Then
-            console.log(Steppe._private);
-            // expect(Steppe._private.selected).to.equal('c');
-            // expect(Steppe._private.selectedIndex).to.equal(2);
-            done();
-          });
-        });
+      sendKey(KEYCODES.DOWN, function() {
+        var firstSelected = Steppe._private.selected;
+        updateValue('bar');
+
+        // Then
+        var actual = Steppe._private.selected;
+        expect(actual).to.not.equal(firstSelected);
+        expect(actual).to.equal(null);
+        done();
+      });
+    });
+
+    it('should keep the selection the same when updating for same value', function(done) {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      sendKey(KEYCODES.DOWN, function() {
+        var firstSelected = Steppe._private.selected;
+        updateValue('a');
+
+        // Then
+        var actual = Steppe._private.selected;
+        expect(actual).to.equal(firstSelected);
+        done();
       });
     });
 
@@ -361,9 +378,11 @@ describe('Steppe', function() {
     });
   });
 
-  // Si valeur ne change pas, selection actuelle ne doit pas changer
-  // visuellement
-  // Si valeur change, selection remise à zero
-  // Ajouter test qu'après avoir selection UP ou DOWN, le selectionStart est
-  // bien égale à la fin du mot, après un _.defer
+  // Click sur suggestion pour les selectionner
+  // Molette souris pour selection
+  // Si tape une valeur qui est égale à une suggestion, auto-selection de la
+  // suggestion ?
+  //
+  // Replace _private with getter methods
+  // Or find a way to expose .selected and .selectedIndex updated
 });
