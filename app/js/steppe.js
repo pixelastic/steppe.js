@@ -78,6 +78,10 @@ window.Steppe = (function() {
     $(children[index]).addClass('steppe-suggestion-selected');
   }
 
+  // Move caret (text cursor) at end of input
+  // Note: Need to be wrapper in a defer call
+  // Note: Is not covered by tests (can't find a way to simulate it in
+  // PhantomJS)
   function moveCaretAtEnd() {
     _.defer(function() {
       var length = _private.input.val().length;
