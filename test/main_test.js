@@ -378,6 +378,70 @@ describe('Steppe', function() {
     });
   });
 
+  describe('mousewheel', function() {
+    function mouseWheelDown() {
+      var event = Zepto.Event('mousewheel');
+      event.wheelDelta = -1;
+      input.trigger(event);
+    }
+    function mouseWheelUp() {
+      var event = Zepto.Event('mousewheel');
+      event.wheelDelta = 1;
+      input.trigger(event);
+    }
+
+    it('should select first suggestion when rolling down', function() {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      mouseWheelDown();
+
+      // Then
+      expect(Steppe._private.selected).to.equal('a');
+    });
+
+    it('should select next suggestion when rolling down', function() {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      mouseWheelDown();
+      mouseWheelDown();
+
+      // Then
+      expect(Steppe._private.selected).to.equal('b');
+    });
+
+    it('should select last suggestion when rolling down', function() {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      mouseWheelUp();
+
+      // Then
+      expect(Steppe._private.selected).to.equal('c');
+    });
+
+    it('should revert to first selection when rolling down and up', function() {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      updateValue('foo');
+
+      // When
+      mouseWheelDown();
+      mouseWheelDown();
+      mouseWheelUp();
+
+      // Then
+      expect(Steppe._private.selected).to.equal('a');
+    });
+  });
+
   // Click sur suggestion pour les selectionner
   // Molette souris pour selection
   // Si tape une valeur qui est égale à une suggestion, auto-selection de la

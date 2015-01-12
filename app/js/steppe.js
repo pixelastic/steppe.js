@@ -94,6 +94,18 @@ window.Steppe = (function() {
     $(children[index]).addClass('steppe-suggestion-selected');
   }
 
+  function onInput() {
+    var newValue = _private.input.val();
+    if (_private.value === newValue) {
+      return;
+    }
+
+    _private.value = _private.input.val();
+    _private.selected = null;
+    _private.selectedIndex = null;
+    _private.options.find(_private.value, displaySuggestions);
+  }
+
   function onKeyDown(event) {
     if (!_private.value) {
       return;
@@ -105,16 +117,12 @@ window.Steppe = (function() {
     keyboardSelect(event.keyCode);
   }
 
-  function onInput() {
-    var newValue = _private.input.val();
-    if (_private.value === newValue) {
-      return;
+  function onMouseWheel(event) {
+    if (event.wheelDelta < 0) {
+      selectNextSuggestion();
+    } else {
+      selectPreviousSuggestion();
     }
-
-    _private.value = _private.input.val();
-    _private.selected = null;
-    _private.selectedIndex = null;
-    _private.options.find(_private.value, displaySuggestions);
   }
 
   function onFocusOut() {
@@ -138,6 +146,7 @@ window.Steppe = (function() {
 
     _private.input.on('input', onInput);
     _private.input.on('keydown', onKeyDown);
+    _private.input.on('mousewheel', onMouseWheel);
     _private.input.on('focusout', onFocusOut);
     _private.input.on('focus', renderWrapper);
 
