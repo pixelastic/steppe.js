@@ -17,6 +17,17 @@ window.Steppe = (function() {
     DOWN: 40
   };
 
+  function moveCaretAtEnd() {
+    _.defer(function() {
+      var length = _private.input.val().length;
+      _private.input[0].setSelectionRange(length, length);
+    });
+  }
+
+  function isSpecialKeyPressed(event) {
+    return _.contains(_.values(KEYCODES), event.keyCode);
+  }
+
   function renderWrapper() {
     if (_private.suggestions.length > 0) {
       _private.suggestionWrapper.show();
@@ -33,39 +44,44 @@ window.Steppe = (function() {
     renderWrapper();
   }
 
-  function keyboardSelect(keycode) {
+  function selectNextSuggestion() {
     var currentSelectedIndex = _private.selectedIndex;
-
-    // Handling movement keys
-    switch (keycode) {
-      case KEYCODES.DOWN:
-        if (currentSelectedIndex === null) {
-          currentSelectedIndex = 0;
-        } else {
-          currentSelectedIndex++;
-        }
-        break;
-      case KEYCODES.UP:
-        if (currentSelectedIndex === null) {
-          currentSelectedIndex = _private.suggestions.length - 1;
-        } else {
-          currentSelectedIndex--;
-        }
-        break;
-    }
-
-    // Handle going over bounds
-    if (currentSelectedIndex < 0) {
-      currentSelectedIndex = _private.suggestions.length - 1;
-    }
-    if (currentSelectedIndex > _private.suggestions.length - 1) {
+    if (currentSelectedIndex === null) {
       currentSelectedIndex = 0;
+    } else {
+      currentSelectedIndex++;
     }
-
     selectSuggestion(currentSelectedIndex);
   }
 
+  function selectPreviousSuggestion() {
+    var currentSelectedIndex = _private.selectedIndex;
+    if (currentSelectedIndex === null) {
+      currentSelectedIndex = _private.suggestions.length - 1;
+    } else {
+      currentSelectedIndex--;
+    }
+    selectSuggestion(currentSelectedIndex);
+  }
+
+  function keyboardSelect(keycode) {
+    if (keycode === KEYCODES.DOWN) {
+      selectNextSuggestion();
+    }
+    if (keycode === KEYCODES.UP) {
+      selectPreviousSuggestion();
+    }
+  }
+
   function selectSuggestion(index) {
+    // Handle going over bounds
+    if (index < 0) {
+      index = _private.suggestions.length - 1;
+    }
+    if (index > _private.suggestions.length - 1) {
+      index = 0;
+    }
+
     _private.selectedIndex = index;
     _private.selected = _private.suggestions[index];
     _private.value = _private.options.val(_private.selected);
@@ -78,22 +94,6 @@ window.Steppe = (function() {
     $(children[index]).addClass('steppe-suggestion-selected');
   }
 
-  // Move caret (text cursor) at end of input
-  // Note: Need to be wrapper in a defer call
-  // Note: Is not covered by tests (can't find a way to simulate it in
-  // PhantomJS)
-  function moveCaretAtEnd() {
-    _.defer(function() {
-      var length = _private.input.val().length;
-      _private.input[0].setSelectionRange(length, length);
-    });
-  }
-
-  function isSpecialKeyPressed(event) {
-    return _.contains(_.values(KEYCODES), event.keyCode);
-  }
-
-  // Pressing special movement keys
   function onKeyDown(event) {
     if (!_private.value) {
       return;
@@ -105,7 +105,6 @@ window.Steppe = (function() {
     keyboardSelect(event.keyCode);
   }
 
-  // Updating input value
   function onInput() {
     var newValue = _private.input.val();
     if (_private.value === newValue) {
