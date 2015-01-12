@@ -440,10 +440,25 @@ describe('Steppe', function() {
       // Then
       expect(Steppe._private.selected).to.equal('a');
     });
+
+    it('should prevent the default behavior of scrolling the page', function() {
+      // Given
+      initWithSuggestions(['a', 'b', 'c']);
+      var event = Zepto.Event('mousewheel');
+      event.wheelDelta = -1;
+      sinon.stub(event, 'preventDefault');
+
+      // When
+      input.trigger(event);
+
+      // Then
+      expect(event.preventDefault).to.have.been.called;
+
+    });
   });
 
+  // Test that mousewheel prevent default
   // Click sur suggestion pour les selectionner
-  // Molette souris pour selection
   // Si tape une valeur qui est égale à une suggestion, auto-selection de la
   // suggestion ?
   //

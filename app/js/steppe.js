@@ -28,6 +28,14 @@ window.Steppe = (function() {
     return _.contains(_.values(KEYCODES), event.keyCode);
   }
 
+  function isInputValueChanged() {
+    return _private.input.val() !== _private.value;
+  }
+
+  function isInputValueEmpty() {
+    return !_private.value;
+  }
+
   function renderWrapper() {
     if (_private.suggestions.length > 0) {
       _private.suggestionWrapper.show();
@@ -95,8 +103,7 @@ window.Steppe = (function() {
   }
 
   function onInput() {
-    var newValue = _private.input.val();
-    if (_private.value === newValue) {
+    if (!isInputValueChanged()) {
       return;
     }
 
@@ -107,10 +114,7 @@ window.Steppe = (function() {
   }
 
   function onKeyDown(event) {
-    if (!_private.value) {
-      return;
-    }
-    if (!isSpecialKeyPressed(event)) {
+    if (isInputValueEmpty() || !isSpecialKeyPressed(event)) {
       return;
     }
 
@@ -118,11 +122,13 @@ window.Steppe = (function() {
   }
 
   function onMouseWheel(event) {
-    if (event.wheelDelta < 0) {
-      selectNextSuggestion();
-    } else {
-      selectPreviousSuggestion();
+    // Prevent scrolling the whole page
+    event.preventDefault();
+    if (isInputValueEmpty()) {
+      return;
     }
+
+    event.wheelDelta < 0 ? selectNextSuggestion() : selectPreviousSuggestion();
   }
 
   function onFocusOut() {
