@@ -45,6 +45,7 @@ window.Steppe = (function() {
   }
 
   function displaySuggestions(userSuggestions) {
+    userSuggestions = userSuggestions || [];
     _private.suggestions = userSuggestions;
 
     var content = _.map(userSuggestions, _private.options.render).join('');
@@ -132,7 +133,11 @@ window.Steppe = (function() {
   }
 
   function onFocusOut() {
-    _private.suggestionWrapper.hide();
+    // Wait a bit before hiding the wrapper, to let user have time to click on
+    // links
+    _.delay(function() {
+      _private.suggestionWrapper.hide();
+    }, 100);
   }
 
   function init(initInput, initOptions) {
