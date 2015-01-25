@@ -20,11 +20,7 @@
     "afterEach": false,
     "beforeEach": false,
     "describe": false,
-    "xdescribe": false,
-    "ddescribe": false,
     "it": false,
-    "xit": false,
-    "iit": false,
     "Steppe": false,
     "jQuery": false,
     "Zepto": false

@@ -9,7 +9,7 @@ window.Steppe = (function() {
       return '<div class="steppe-suggestion">' + suggestion + '</div>';
     },
     val: function(suggestion) {
-      return suggestion.toString();
+      return suggestion.toString ? suggestion.toString() : null;
     }
   };
   var KEYCODES = {
@@ -26,14 +26,6 @@ window.Steppe = (function() {
 
   function isSpecialKeyPressed(event) {
     return _.contains(_.values(KEYCODES), event.keyCode);
-  }
-
-  function isInputValueChanged() {
-    return _private.input.val() !== _private.value;
-  }
-
-  function isInputValueEmpty() {
-    return !_private.value;
   }
 
   function renderWrapper() {
@@ -54,6 +46,9 @@ window.Steppe = (function() {
   }
 
   function selectNextSuggestion() {
+    if (_.isEmpty(_private.suggestions)) {
+      return;
+    }
     var currentSelectedIndex = _private.selectedIndex;
     if (currentSelectedIndex === null) {
       currentSelectedIndex = 0;
@@ -64,6 +59,9 @@ window.Steppe = (function() {
   }
 
   function selectPreviousSuggestion() {
+    if (_.isEmpty(_private.suggestions)) {
+      return;
+    }
     var currentSelectedIndex = _private.selectedIndex;
     if (currentSelectedIndex === null) {
       currentSelectedIndex = _private.suggestions.length - 1;
@@ -104,7 +102,8 @@ window.Steppe = (function() {
   }
 
   function onInput() {
-    if (!isInputValueChanged()) {
+    var newValue = _private.input.val();
+    if (_private.value === newValue) {
       return;
     }
 
@@ -115,7 +114,12 @@ window.Steppe = (function() {
   }
 
   function onKeyDown(event) {
-    if (isInputValueEmpty() || !isSpecialKeyPressed(event)) {
+    // Triggered on every keypress, but we're only interested in special keys
+    // (up and down)
+    if (!_private.value) {
+      return;
+    }
+    if (!isSpecialKeyPressed(event)) {
       return;
     }
 
@@ -123,18 +127,15 @@ window.Steppe = (function() {
   }
 
   function onMouseWheel(event) {
-    // Prevent scrolling the whole page
-    event.preventDefault();
-    if (isInputValueEmpty()) {
-      return;
+    if (event.wheelDelta < 0) {
+      selectNextSuggestion();
+    } else {
+      selectPreviousSuggestion();
     }
-
-    event.wheelDelta < 0 ? selectNextSuggestion() : selectPreviousSuggestion();
+    event.preventDefault();
   }
 
   function onFocusOut() {
-    // Wait a bit before hiding the wrapper, to let user have time to click on
-    // links
     _.delay(function() {
       _private.suggestionWrapper.hide();
     }, 100);
