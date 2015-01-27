@@ -22,7 +22,7 @@ module.exports = function(config) {
     files: [
       'bower_components/zepto/zepto.min.js',
       'bower_components/lodash/dist/lodash.min.js',
-      'app/js/steppe.js',
+      'lib/steppe.js',
       'test/helpers.js',
       'test/fixtures/**/*.html',
       'test/*_test.js'

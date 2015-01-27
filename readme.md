@@ -2,7 +2,7 @@
 
 `steppe.js` is a lightweight autocomplete plugin. Bind it to an `input` field
 and define an asynchronous search method, and it will display a list of
-suggestions.
+suggestions on every keystroke.
 
 ## Installation
 
@@ -12,8 +12,7 @@ bower install steppe.js
 
 ## Dependencies
 
-Steppe depends on `$` (either `jQuery` or `zepto`) and `_` (either `underscore`
-or `lodash`).
+Steppe depends on `Zepto` and `lodash`.
 
 ## Usage
 
