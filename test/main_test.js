@@ -60,6 +60,16 @@ describe('Steppe main', function() {
       expect(options.find).to.have.been.called;
       expect(options.find).to.have.been.calledWith('foo');
     });
+
+
+
+    // Si plusieurs find sont fire (un par keystroke), et que les callbacks
+    // sont fire dans le désordre, il faut empecher un des premiers callbacks,
+    // en retard, de modifier els résultats d'un des derniers
+    // En gros, on n'accepte un callback que si son fire est plus récent que le
+    // fire du précédent callback
+
+
   });
 
   describe('render', function() {
@@ -100,5 +110,36 @@ describe('Steppe main', function() {
       // Then
       expect(options.render).to.not.have.been.called;
     });
+  });
+
+  it('should not render if a newer result has already been rendered', function() {
+    // Given
+    var trappedCallbacks = {};
+    var options = {
+      find: function(keyword, callback) {
+        // We simply trap callbacks to call them later
+        trappedCallbacks[keyword] = function() {
+          callback(keyword);
+        };
+      },
+      render: sinon.stub()
+    };
+    Steppe.init(input, options);
+
+    // Calling values in order
+    updateValue('a');
+    updateValue('b');
+    updateValue('c');
+
+    // When
+    trappedCallbacks.b();
+    trappedCallbacks.c();
+    trappedCallbacks.a();
+
+    // Then
+    expect(options.render).to.have.been.calledWith('b');
+    expect(options.render).to.have.been.calledWith('c');
+    expect(options.render).to.not.have.been.calledWith('a');
+
   });
 });
