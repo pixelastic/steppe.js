@@ -44,7 +44,18 @@ describe('Steppe dropdown mode', function() {
     fixture.cleanup();
   });
 
-  describe('suggestionWrapper', function() {
+  describe('output', function() {
+    it('should add a default one if none is specified', function() {
+      // Given
+
+      // When
+      Steppe.init(input);
+
+      // Then
+      var actual = $j(Steppe._private.options.output);
+      expect(actual).to.have.class('steppe-wrapper');
+    });
+
     it('should be hidden on init', function() {
       // Given
 
@@ -52,8 +63,7 @@ describe('Steppe dropdown mode', function() {
       Steppe.init(input);
 
       // Then
-      var actual = $input.next();
-      expect(actual).to.have.class('steppe-wrapper');
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.not.be.visible;
     });
 
@@ -65,7 +75,7 @@ describe('Steppe dropdown mode', function() {
       updateValue('foo');
 
       // Then
-      var actual = $input.next();
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.be.visible;
     });
 
@@ -77,7 +87,7 @@ describe('Steppe dropdown mode', function() {
       updateValue('foo');
 
       // Then
-      var actual = $input.next();
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.not.be.visible;
     });
 
@@ -89,7 +99,7 @@ describe('Steppe dropdown mode', function() {
       input.trigger('focusout');
 
       // Then
-      var actual = $input.next();
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.not.be.visible;
     });
 
@@ -103,7 +113,7 @@ describe('Steppe dropdown mode', function() {
       input.focus();
 
       // Then
-      var actual = $input.next();
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.be.visible;
     });
 
@@ -116,7 +126,7 @@ describe('Steppe dropdown mode', function() {
       input.focus();
 
       // Then
-      var actual = $input.next();
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.not.be.visible;
     });
 
@@ -136,7 +146,7 @@ describe('Steppe dropdown mode', function() {
       updateValue('foo');
 
       // Then
-      var actual = $input.next();
+      var actual = $j(Steppe._private.options.output);
       expect(actual).to.have.html('<div class="foobar">foobar</div>');
     });
   });
@@ -386,7 +396,6 @@ describe('Steppe dropdown mode', function() {
 
       // Then
       expect(event.preventDefault).to.have.been.called;
-
     });
   });
 });

@@ -33,6 +33,18 @@ describe('Steppe main', function() {
     fixture.cleanup();
   });
 
+  describe('init', function() {
+    it('should select dropdown mode as a default', function() {
+      // Given
+
+      // When
+      Steppe.init(input);
+
+      // Then
+      expect(Steppe._private.options.mode).to.equal('dropdown');
+    });
+  });
+
   describe('find', function() {
     it('should call custom find method when value changes', function() {
       // Given
