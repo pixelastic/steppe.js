@@ -1,16 +1,12 @@
 {
+  "bitwise": true,
   "browser": true,
   "camelcase": true,
   "curly": true,
+  "eqeqeq": true,
   "expr": true,
-  "immed": true,
-  "indent": 2,
-  "latedef": "nofunc",
-  "newcap": true,
-  "node": true,
-  "plusplus": false,
-  "quotmark": "single",
-  "trailing": true,
+  "forin": true,
+  "freeze": true,
   "globals": {
     "$": false,
     "Steppe": false,
@@ -29,13 +25,16 @@
     "xdescribe": false,
     "xit": false
   },
-  "bitwise": true,
-  "eqeqeq": true,
-  "forin": true,
-  "freeze": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": "nofunc",
+  "newcap": true,
   "noarg": true,
+  "node": true,
   "nonew": true,
+  "plusplus": false,
+  "quotmark": "single",
+  "trailing": true,
   "undef": true,
   "unused": true
 }
-
