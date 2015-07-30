@@ -1,5 +1,9 @@
 # steppe.js
 
+__Steppe.js is no longer maintained. If you need an autocomplete solution, have
+a look at [Algolia's autocomplete](https://github.com/algolia/autocomplete.js)
+or [Twitter typeahead](https://github.com/twitter/typeahead.js)__
+
 `steppe.js` is a lightweight autocomplete plugin. Bind it to an `input` field
 and define an asynchronous search method, and it will display a list of
 suggestions on every keystroke.
